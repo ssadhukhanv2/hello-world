@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: hlw-config-map
+    namespace: default
+data:
+    HLWD_GREETING_MESSAGE: Hola Amigos

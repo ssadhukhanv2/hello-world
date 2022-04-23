@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: hlw-config-map
+    namespace: default
+data:
+    HLWD_GREETING_MESSAGE: Hola Amigos!!!
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+  labels:
+    app: hlwd
+  name: hlwd
+  namespace: default
+spec:
+  replicas: 2
+  minReadySeconds: 30
+  selector:
+    matchLabels:
+      app: hlwd
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: hlwd
+    spec:
+      containers:
+      - image: ssadhukhanv2/hello-world:0.0.7-SNAPSHOT
+        imagePullPolicy: IfNotPresent
+        name: hello-world
+        env:
+          #- name: hlwd.greeting.message
+          - name: HLWD.GREETING.MESSAGE
+            #value: Hola Amigos
+            valueFrom:
+                configMapKeyRef:
+                    key: HLWD_GREETING_MESSAGE
+                    name: hlw-config-map
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: hlwd
+  name: hlwd
+  namespace: default
+spec:
+  ports:
+    #- nodePort: 30622
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+  selector:
+    app: hlwd
+  sessionAffinity: None
+  type: NodePort

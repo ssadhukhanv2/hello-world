@@ -1,0 +1,29 @@
+#https://stackoverflow.com/questions/64125048/get-error-unknown-field-servicename-in-io-k8s-api-networking-v1-ingressbacken:
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: default
+  name: hlwd-gateway-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /hello
+        pathType: Prefix
+        backend:
+          service:
+            name: hlwd
+            port:
+              number: 8080
+#  - http:
+#      paths:
+#        - path: /
+#          pathType: Prefix
+#          backend:
+#            service:
+#              name: hlwd
+#              port:
+#                number: 8080
